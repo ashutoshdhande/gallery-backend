@@ -9,7 +9,7 @@ exports.signup = async (req, res) => {
 
     //check if fields exists
     if (!(firstName && lastName && email && password && dob)) {
-      res
+      return res
         .status(400)
         .send("<h1>All Fields are required. Check and Try again</h1>");
     }
@@ -18,7 +18,7 @@ exports.signup = async (req, res) => {
     const emailExists = await User.findOne({ email });
 
     if (emailExists) {
-      res.status(200).send("<h1>Email is already registered.</h1>");
+      return res.status(200).send("<h1>Email is already registered.</h1>");
     }
     //Encrypt password
     const hashPass = await bcrypt.hash(password, 10);
@@ -43,10 +43,10 @@ exports.signup = async (req, res) => {
     user.token = token;
     user.password = undefined;
 
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Something went wrong.");
+    return res.status(500).send("Something went wrong.");
   }
 };
 
@@ -56,7 +56,7 @@ exports.signin = async (req, res) => {
     const { email, password } = req.body;
 
     if (!(email && password)) {
-      res
+      return res
         .status(400)
         .send("<h1>All Fields are required. Check and Try again</h1>");
     }
@@ -64,12 +64,12 @@ exports.signin = async (req, res) => {
     //find the user in DB
     const user = await User.findOne({ email });
 
-    if (!user) res.status(400).send("Invalid Credentials");
+    if (!user) return res.status(400).send("Invalid Credentials");
 
     //Check if password matches
     const validPassword = await bcrypt.compare(password, user.password);
     if (!(email && validPassword)) {
-      res.status(400).send("Invalid Credentials");
+      return res.status(400).send("Invalid Credentials");
     }
 
     //Generate token
@@ -80,9 +80,9 @@ exports.signin = async (req, res) => {
     );
     user.token = token;
     user.password = undefined;
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Something went wrong.");
+    return res.status(500).send("Something went wrong.");
   }
 };
