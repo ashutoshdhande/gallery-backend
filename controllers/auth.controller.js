@@ -86,3 +86,5 @@ exports.signin = async (req, res) => {
     return res.status(500).send("Something went wrong.");
   }
 };
+
+exports.signout = (req, res) => {};
