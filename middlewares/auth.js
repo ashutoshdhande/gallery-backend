@@ -1,13 +1,12 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-  const token =
-    req.cookies.token ||
-    req.body.token ||
-    req.header("Authorization").replace("Bearer ", "");
+  const token = req.cookies.token;
+
+  // if (token === undefined) token = null;
 
   if (!token) {
-    return res.status(404).send("No token found.");
+    return res.status(404).send("<h1>No token found.</h1>");
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

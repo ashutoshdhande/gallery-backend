@@ -68,6 +68,7 @@ exports.signin = async (req, res) => {
 
     //Check if password matches
     const validPassword = await bcrypt.compare(password, user.password);
+
     if (!(email && validPassword)) {
       return res.status(400).send("Invalid Credentials");
     }
@@ -80,7 +81,18 @@ exports.signin = async (req, res) => {
     );
     user.token = token;
     user.password = undefined;
-    return res.status(200).json(user);
+    // return res.status(200).json(user);
+
+    // Sending Cookie
+    const options = {
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      httpOnly: true,
+    };
+
+    return res.status(200).cookie("token", token, options).json({
+      Success: true,
+      token,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).send("Something went wrong.");
